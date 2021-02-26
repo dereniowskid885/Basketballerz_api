@@ -2,6 +2,10 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const dotenv = require("dotenv");
+const path = require("path");
+
+const frontEndDir = path.join(__dirname, "../basketballerz");
+app.use(express.static(frontEndDir));
 
 dotenv.config({ path: "./.env"});
 
@@ -23,9 +27,3 @@ database.connect( (error) => {
 app.listen(5000, () => {
     console.log("Server running on port 5000");
 });
-
-app.get("/", (request, response) => {
-    response.send("<h1>Hello !</h1>")
-});
-
-
