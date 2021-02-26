@@ -4,10 +4,16 @@ const mysql = require("mysql");
 const dotenv = require("dotenv");
 const path = require("path");
 
+// Setting Front End Directory
 const frontEndDir = path.join(__dirname, "../basketballerz");
 app.use(express.static(frontEndDir));
 
-dotenv.config({ path: "./.env"});
+// Parse URL-encoded bodies (sent by HTML forms)
+app.use(express.urlencoded({ extended: false }));
+// Parse JSON bodies (sent by API clients)
+app.use(express.json());
+
+dotenv.config({ path: "./.env" });
 
 const database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
@@ -23,6 +29,10 @@ database.connect( (error) => {
         console.log("MySQL connected");
     }
 });
+
+//Define routes
+app.use("/", require("./routes/pages"));
+app.use("/auth", require("./routes/auth"));
 
 app.listen(5000, () => {
     console.log("Server running on port 5000");
