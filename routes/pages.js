@@ -5,15 +5,15 @@ const path = require("path");
 const frontEndDir = path.join(__dirname, "../../basketballerz");
 
 router.get("/", (request, response) => {
-    response.sendFile(frontEndDir + "/index.html");
+    response.render(frontEndDir + "/index.hbs");
 });
 
 router.get("/register", (request, response) => {
-    response.sendFile(frontEndDir + "/register.html");
+    response.render(frontEndDir + "/register.hbs");
 });
 
 router.get("/game", (request, response) => {
-    response.sendFile(frontEndDir + "/game.html");
+    response.render(frontEndDir + "/game.hbs");
 });
 
 module.exports = router;

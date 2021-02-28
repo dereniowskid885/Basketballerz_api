@@ -7,6 +7,7 @@ const path = require("path");
 // Setting Front End Directory
 const frontEndDir = path.join(__dirname, "../basketballerz");
 app.use(express.static(frontEndDir));
+app.set("view engine", "hbs");
 
 // Parse URL-encoded bodies (sent by HTML forms)
 app.use(express.urlencoded({ extended: false }));
@@ -15,6 +16,7 @@ app.use(express.json());
 
 dotenv.config({ path: "./.env" });
 
+// Database Connection
 const database = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
