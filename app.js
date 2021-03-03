@@ -14,6 +14,7 @@ app.set("view engine", "hbs");
 app.use(express.urlencoded({ extended: false }));
 // Parse JSON bodies (sent by API clients)
 app.use(express.json());
+// Cookie parser
 app.use(cookieParser());
 
 dotenv.config({ path: "./.env" });

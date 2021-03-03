@@ -57,11 +57,12 @@ exports.register = (request, response) => {
     console.log(request.body);
     const { username, password, password_confirm, e_mail, jersey_number, position } = request.body;
     
-    database.query("SELECT e_mail FROM users WHERE e_mail = ?", [e_mail], async (error, result) => {
+    database.query("SELECT * FROM users WHERE username = ?", [username], (error, result) => {
         if(error) {
             console.log(error);
         }
-        
+
+        console.log(result);
         if(password !== password_confirm) {
             return response.render(frontEndDir + "/register.hbs", {
                 message: "Passwords do not match"
@@ -70,20 +71,33 @@ exports.register = (request, response) => {
         
         if(result.length > 0) {
             return response.render(frontEndDir + "/register.hbs", {
-                message: "E-mail is already in use"
+                message: "Username is already in use"
             });
-        } 
+        }
 
-        let hashedPassword = await bcrypt.hash(password, 8);
-
-        database.query("INSERT INTO users SET ?", {username: username, password: hashedPassword, e_mail: e_mail, jersey_number: jersey_number, position: position}, (error, result) => {
+        database.query("SELECT * FROM users WHERE e_mail = ?", [e_mail], async (error, result) => {
             if(error) {
                 console.log(error);
-            } else {
+            }
+
+            console.log(result);
+            if(result.length > 0) {
                 return response.render(frontEndDir + "/register.hbs", {
-                    message: "Account created"
+                    message: "E-mail is already in use"
                 });
             }
+
+            let hashedPassword = await bcrypt.hash(password, 8);
+
+            database.query("INSERT INTO users SET ?", {username: username, password: hashedPassword, e_mail: e_mail, jersey_number: jersey_number, position: position}, (error, result) => {
+                if(error) {
+                    console.log(error);
+                } else {
+                    return response.render(frontEndDir + "/register.hbs", {
+                        message: "Account created"
+                    });
+                }
+            });
         });
     });
 }
