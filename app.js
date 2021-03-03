@@ -3,6 +3,7 @@ const app = express();
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 const path = require("path");
+const cookieParser = require("cookie-parser");
 
 // Setting Front End Directory
 const frontEndDir = path.join(__dirname, "../basketballerz");
@@ -13,6 +14,7 @@ app.set("view engine", "hbs");
 app.use(express.urlencoded({ extended: false }));
 // Parse JSON bodies (sent by API clients)
 app.use(express.json());
+app.use(cookieParser());
 
 dotenv.config({ path: "./.env" });
 

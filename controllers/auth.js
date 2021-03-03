@@ -1,4 +1,4 @@
-const { request } = require("express");
+const { request, response } = require("express");
 const path = require("path");
 const frontEndDir = path.join(__dirname, "../../basketballerz");
 const mysql = require("mysql");
@@ -12,6 +12,46 @@ const database = mysql.createConnection({
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE
 });
+
+exports.game = async (request, response) => {
+    try {
+        const { username, password } = request.body;
+
+        if(!username || !password) {
+            return response.status(400).render(frontEndDir + "/index.hbs", {
+                message: "Please enter login and password"
+            });
+        }
+
+        database.query("SELECT * FROM users WHERE username = ?", [username], async (error, result) => {
+            console.log(result);
+            if(!result || !(await bcrypt.compare(password, result[0].password))) {
+                response.status(401).render(frontEndDir + "/index.hbs", {
+                    message: "Username or password is incorrect"
+                });
+            } else {
+                const id = result[0].id;
+                const token = jwt.sign({ id }, process.env.JWT_SECRET, {
+                    expiresIn: process.env.JWT_EXPIRES_IN
+                });
+
+                console.log("The token is: " + token);
+
+                const cookieOptions = {
+                    expires: new Date(
+                        Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
+                    ),
+                    httpOnly: true
+                };
+
+                response.cookie("jwt", token, cookieOptions);
+                response.status(200).redirect("/game");
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 exports.register = (request, response) => {
     console.log(request.body);
@@ -46,4 +86,4 @@ exports.register = (request, response) => {
             }
         });
     });
-};
+}
